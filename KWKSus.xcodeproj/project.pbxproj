@@ -23,6 +23,19 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		DC6159FD2D1FD50C0089338D /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		DC6159C62D1E1DAF0089338D /* KWKSus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KWKSus.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DC6159D82D1E1DB00089338D /* KWKSusTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = KWKSusTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -102,6 +115,7 @@
 				DC6159C22D1E1DAF0089338D /* Sources */,
 				DC6159C32D1E1DAF0089338D /* Frameworks */,
 				DC6159C42D1E1DAF0089338D /* Resources */,
+				DC6159FD2D1FD50C0089338D /* Embed Frameworks */,
 			);
 			buildRules = (
 			);

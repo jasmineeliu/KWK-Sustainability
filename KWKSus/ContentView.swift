@@ -1,59 +1,68 @@
-//
-//  ContentView.swift
-//  KWKSus
-//
-//  Created by jasmine 🍡 on 12/26/24.
-//
-
 import SwiftUI
 import SwiftData
 
 struct ContentView: View {
-    @Environment(\.modelContext) private var modelContext
-    @Query private var items: [Item]
+    @State private var articles: [NewsArticle] = []
 
+    
     var body: some View {
-        NavigationSplitView {
-            List {
-                ForEach(items) { item in
-                    NavigationLink {
-                        Text("Item at \(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))")
-                    } label: {
-                        Text(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))
+        ZStack {
+            Color(red:211/255, green: 220/255 , blue: 204/255)
+                .ignoresSafeArea(.all)
+            VStack {
+                Text("Discover.")
+                Text("Discover the latest articles on AI in the environment")
+                
+                relevantArticles
+                
+            } //end VStack
+        } //end ZStack
+        
+        
+        
+    } // end body view
+    
+    var relevantArticles: some View {
+        HStack {
+            ScrollView(.horizontal, showsIndicators:false) {
+                HStack{
+                    ForEach(articles) { article in
+                        if (article.title != "[Removed]" && article.description != "[Removed]") {
+                    
+                            VStack{
+                                    Text(article.title ?? "No Title")
+                                    
+                                
+                                .padding()
+                            }
+                            .background(
+                                
+                                Rectangle().frame(width: 200, height: 250).foregroundColor(Color(red: 127/255, green: 165/225, blue: 116/225)).cornerRadius(18)
+                            )
+                            .frame(width: 200, height: 250)
+                            .padding(5)
+
+                            
+                        }
                     }
                 }
-                .onDelete(perform: deleteItems)
+                .padding(.leading, 8.0)
             }
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    EditButton()
-                }
-                ToolbarItem {
-                    Button(action: addItem) {
-                        Label("Add Item", systemImage: "plus")
+                
+                
+                
+        }.onAppear {
+            NewsAPIService.shared.fetchArticles {
+                fetchedArt in if let fetchedArticles = fetchedArt{
+                    DispatchQueue.main.async {
+                        self.articles = fetchedArticles
                     }
                 }
             }
-        } detail: {
-            Text("Select an item")
         }
-    }
-
-    private func addItem() {
-        withAnimation {
-            let newItem = Item(timestamp: Date())
-            modelContext.insert(newItem)
-        }
-    }
-
-    private func deleteItems(offsets: IndexSet) {
-        withAnimation {
-            for index in offsets {
-                modelContext.delete(items[index])
-            }
-        }
-    }
-}
+    } //end relevantArticles
+    
+} // end contentview
 
 #Preview {
     ContentView()
