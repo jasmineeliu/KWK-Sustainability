@@ -20,7 +20,7 @@ class NewsAPIService {
 
     
     func fetchArticles(completion: @escaping ([NewsArticle]?) -> Void) {
-        let urlString = "https://newsapi.org/v2/everything?q=(ai AND environment) AND (water OR climate OR pollution OR energy OR modeling OR agriculture OR air quality OR carbon footprint OR sustainability)&language=en&pageSize=20&sortBy=relevancy&apiKey=\(key)"
+        let urlString = "https://newsapi.org/v2/everything?q=(ai AND environment) AND (water OR climate OR pollution OR energy OR modeling OR agriculture OR air quality OR carbon footprint OR sustainability) &language=en&pageSize=20&sortBy=relevancy&apiKey=\(key)"
         
         guard let url = URL(string: urlString) else {
             print("Error creating URL")
@@ -41,6 +41,7 @@ class NewsAPIService {
                 completion(nil)
                 return
             }
+            
             
             guard let data = data else {
                 print("Error fetching articles: no data")
