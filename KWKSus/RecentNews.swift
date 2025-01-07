@@ -7,6 +7,8 @@ struct NewsArticle: Codable, Identifiable {
     let description: String?
     let url: String?
     let urlToImage: String?
+    let author: String?
+    let publishedAt: String?
 }
 
 struct NewsAPIResponse: Codable {
@@ -20,7 +22,7 @@ class NewsAPIService {
 
     
     func fetchArticles(completion: @escaping ([NewsArticle]?) -> Void) {
-        let urlString = "https://newsapi.org/v2/everything?q=(ai AND environment) AND (water OR climate OR pollution OR energy OR modeling OR agriculture OR air quality OR carbon footprint OR sustainability) &language=en&pageSize=20&sortBy=relevancy&apiKey=\(key)"
+        let urlString = "https://newsapi.org/v2/everything?q=(ai AND environment) AND impact AND climate AND (water OR pollution OR energy OR agriculture OR air quality OR carbon footprint OR sustainability) &language=en&pageSize=20&sortBy=relevancy&apiKey=\(key)"
         
         guard let url = URL(string: urlString) else {
             print("Error creating URL")
