@@ -10,6 +10,7 @@ import SwiftUI
 enum Tab: String, CaseIterable {
     case house
     case book
+    case bag
     case person
 }
 
@@ -36,7 +37,7 @@ struct NavBar: View {
                             }
                             
                         }
-                        .foregroundColor(Color(red: 100/255, green: 127/225, blue: 96/225))
+                        .foregroundColor(Color(red: 100/255, green: 127/255, blue: 96/255))
                     Spacer()
                 
                     

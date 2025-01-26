@@ -10,7 +10,7 @@ import SwiftUI
 
 
 struct ContentView: View {
-    @State private var selectedTab: Tab = .house
+    @State var selectedTab: Tab = .house
     
     init() {
         UITabBar.appearance().isHidden = true
@@ -22,17 +22,21 @@ struct ContentView: View {
         ZStack {
             VStack {
                 TabView(selection: $selectedTab) {
-                    Home()
+                    Home(selectedTab: $selectedTab)
                         .tag(Tab.house)
                         .transition(.slide)
                     Discover()
                         .tag(Tab.book)
+                        .transition(.slide)
+                    Shop()
+                        .tag(Tab.bag)
                         .transition(.slide)
                     Profile()
                         .tag(Tab.person)
                         .transition(.slide)
                 }
             }
+
             
             VStack {
                 Spacer()
@@ -41,6 +45,7 @@ struct ContentView: View {
             }
             
         }
+
         .ignoresSafeArea(.all)
 
         

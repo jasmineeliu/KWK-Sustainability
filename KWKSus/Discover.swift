@@ -3,49 +3,87 @@ import SwiftData
 
 struct Discover: View {
     @State private var articles: [NewsArticle] = []
-    @State private var selectedArticle: NewsArticle? = nil
+    @State var selectedArticle: NewsArticle? = nil
+    @State private var displayedArticles: [NewsArticle] = []
+    @AppStorage("selectedPreference") var selectedPreference: String = "water"
+    @AppStorage("articlesRead") var articlesRead: Int = 0
+    
 
+    
+    var selectedTopic: [NewsArticle] {
+            switch selectedPreference {
+            case "water":
+                return TargetedArticles.waterArticles
+            case "climate":
+                return TargetedArticles.climateArticles
+            default:
+                return TargetedArticles.powerArticles
+            }
+        }
+    var articleColor: Color {
+            switch selectedPreference {
+            case "water":
+                return Color(red: 88/255, green: 123/255, blue: 127/255)
+            case "climate":
+                return Color(red: 126/255, green: 173/255, blue: 119/255)
+            default:
+                return Color(red: 219/255, green: 144/255, blue: 101/255)
+            }
+        }
+    
     
     var body: some View {
         NavigationStack {
             ZStack {
                 Color(red:211/255, green: 220/255 , blue: 204/255)
                     .ignoresSafeArea(.all)
-                VStack {
+                
+                ScrollView {
                     VStack {
-                        Text("Discover.")
-                            .font(.custom("PTSerif-Bold", size: 57))
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .foregroundColor(Color(red: 78/255, green: 112/255, blue: 96/255))
-                        Text("Discover the latest articles on AI in the environment")
-                            .font(.custom("Martel-Regular", size: 18))
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(.bottom, 10)
+                        VStack {
+                            Text("Discover.")
+                                .font(.custom("PTSerif-Bold", size: 57))
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .foregroundColor(Color(red: 78/255, green: 112/255, blue: 96/255))
+                            Text("Discover the latest articles on AI in the environment")
+                                .font(.custom("Martel-Regular", size: 18))
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(.bottom, 10)
+                            
+                            Text("Latest Articles")
+                                .font(.custom("Martel-ExtraBold", size: 22))
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                            
+                            relevantArticles
+                            
+                            
+                            
+                        } // first block of AI in sustainability articles
+                        .padding(.leading, 24)
+                        .padding(.bottom, 10)
                         
-                        Text("Latest Articles")
-                            .font(.custom("Martel-ExtraBold", size: 22))
-                            .frame(maxWidth: .infinity, alignment: .leading)
                         
-                        //relevantArticles
+                        VStack {
+                            Text("Recommended for you")
+                                .font(.custom("Martel-ExtraBold", size: 22))
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                            
+                            targetedArticle
+                            
+                        }
+                        .padding(.leading, 24)
                         
                         
                         
                         
-                    } // first block of AI in sustainability articles
-                    .padding(.leading, 24)
-                    .padding(.bottom, 10)
+                        
+                    } //end VStack
+                    .frame(maxHeight: .infinity, alignment: .top)
                     
-                    
-                    VStack {
-                        Text("Recommended for you")
-                            .font(.custom("Martel-ExtraBold", size: 22))
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                        
-                    }
-                    .padding(.leading, 24)
-                    
-                } //end VStack
-                .frame(maxHeight: .infinity, alignment: .top)
+                } // end scrollview
+                .padding(.bottom, 70)
+                .padding(.top, 10)
+                
             } //end ZStack
             
         }
@@ -133,6 +171,90 @@ struct Discover: View {
     } //end relevantArticles
     
     
+    var targetedArticle: some View {
+    
+            HStack {
+                ScrollView(.horizontal, showsIndicators:false) {
+                    HStack{
+                        ForEach(displayedArticles, id: \.id) { article in
+                            
+                            if (article.title != "[Removed]" && article.description != "[Removed]" && article.title != "" && article.title != nil) {
+
+                                Button (action: {
+                                    selectedArticle = article
+                                }, label: {
+                                        
+                                                VStack {
+                                                    AsyncImage(url: URL(string: article.urlToImage ?? "")) {
+                                                        image in
+                                                        image.resizable()
+                                                            .aspectRatio(contentMode: .fill)
+                                                            .frame(width: 170, height: 140)
+                                                            .clipShape(.rect(cornerRadius: 10))
+                                                            .padding(.horizontal, 30)
+                                                            .padding(.vertical, 6.0)
+                                                        
+                                                    }
+                                                    placeholder: {
+                                                        Image("laptop-nature-concept")
+                                                            .resizable()
+                                                            .aspectRatio(contentMode: .fill)
+                                                            .frame(width: 170, height: 140)
+                                                            .clipShape(.rect(cornerRadius: 10))
+                                                            .padding(.horizontal, 10)
+                                                            .padding(.vertical, 6.0)
+                                                    }
+                                                    
+                                                    
+                                                    Text(article.title ?? "No Title")
+                                                        .font(.custom("Martel-Bold", size: 18))
+                                                        .environment(\._lineHeightMultiple, 0.9) .minimumScaleFactor(0.1)
+                                                        .frame(width: 165, alignment: .leading)
+                                                        .multilineTextAlignment(.leading)
+                                                        .foregroundStyle(Color.black)
+                                                }
+                                                .padding(.horizontal, 30)
+                                                .padding(.vertical, 15.0)
+                                                
+                                            
+                                            .background(
+                                                Rectangle().frame(width: 200, height: 270).foregroundColor(articleColor).cornerRadius(30)
+                                            )
+                                            .frame(width: 200, height: 270)
+                                            .padding(.trailing, 10)
+                                            // finish designing
+                                        })
+                                .sheet(item: $selectedArticle) {article in
+                                    ArticleDetails(article: article)
+                                        .presentationDetents([.height(625)])
+                                }
+                                
+                                
+                                    }
+                                } // end of what happens if article is valid
+                                        
+                        }
+                    }
+
+            } // end Hstack
+            
+        .onAppear {
+            loadArticles()
+            NewsAPIService.shared.fetchArticles {
+                fetchedArt in if let fetchedArticles = fetchedArt{
+                    DispatchQueue.main.async {
+                        self.articles = fetchedArticles
+                    }
+                }
+            }
+        }
+    } //end targeted articles
+    
+    func loadArticles() {
+            displayedArticles = selectedTopic
+        }
+    
+    
     
     struct ArticleDetails: View {
         let article: NewsArticle
@@ -165,6 +287,10 @@ struct Discover: View {
                             
                             Button( action: {
                                 if let url = URL(string: article.url ?? "") {
+                                    let curRead = UserDefaults.standard.integer(forKey: "articlesRead") + 1
+                                    UserDefaults.standard.set(curRead, forKey: "articlesRead")
+                                    let points =  UserDefaults.standard.integer(forKey: "userPoints") + 5
+                                    UserDefaults.standard.set(points, forKey: "userPoints")
                                     openURL(url)
                                 }
                                 else {
@@ -232,6 +358,10 @@ struct Discover: View {
                         
                         Button( action: {
                             if let url = URL(string: article.url ?? "") {
+                                let curRead = UserDefaults.standard.integer(forKey: "articlesRead") + 1
+                                UserDefaults.standard.set(curRead, forKey: "articlesRead")
+                                let points =  UserDefaults.standard.integer(forKey: "userPoints") + 5
+                                UserDefaults.standard.set(points, forKey: "userPoints")
                                 openURL(url)
                             }
                             else {
@@ -258,8 +388,7 @@ struct Discover: View {
         }
     }
     
-    
-    
+
     
     
     

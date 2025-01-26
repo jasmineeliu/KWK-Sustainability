@@ -22,7 +22,9 @@ class NewsAPIService {
 
     
     func fetchArticles(completion: @escaping ([NewsArticle]?) -> Void) {
-        let urlString = "https://newsapi.org/v2/everything?q=(ai AND environment) AND impact AND climate AND (water OR pollution OR energy OR agriculture OR air quality OR carbon footprint OR sustainability) &language=en&pageSize=20&sortBy=relevancy&apiKey=\(key)"
+//        let urlString = "https://newsapi.org/v2/everything?q=(ai AND environment) AND impact AND climate AND (water OR pollution OR energy OR agriculture OR air quality OR carbon footprint OR sustainability) &language=en&pageSize=20&sortBy=relevancy&apiKey=\(key)"
+        
+        let urlString = "https://newsapi.org/v2/everything?q=(AI AND environment AND sustainability) OR (AI AND carbon footprint) OR (AI AND pollution) OR (AI AND water) OR (AI AND agriculture) OR (AI AND air quality) OR (AI AND energy) OR (AI AND climate) OR (AI AND biodiversity) OR (AI AND Climate Change) &sortBy=relevancy&language=en&pageSize=100&apiKey=\(key)"
         
         guard let url = URL(string: urlString) else {
             print("Error creating URL")
@@ -57,7 +59,12 @@ class NewsAPIService {
             do {
                 
                 let response = try JSONDecoder().decode(NewsAPIResponse.self, from: data)
-                completion(response.articles)
+                let filteredArticles = response.articles.filter { article in
+                                (article.title?.contains("AI") ?? false)
+                    && ((article.description?.contains("sustainability") ?? false) || (article.description?.contains("environment") ?? false) || (article.description?.contains("water") ?? false) || (article.description?.contains("pollution") ?? false) || (article.description?.contains("pollution") ?? false) || (article.description?.contains("carbon footprint") ?? false) || (article.description?.contains("energy") ?? false) || (article.description?.contains("agriculture") ?? false) || (article.description?.contains("air quality") ?? false) || (article.description?.contains("climate") ?? false) || (article.description?.contains("air quality") ?? false) || (article.description?.contains("biodiversity") ?? false))
+                            }
+                completion(filteredArticles)
+
                 
             } catch {
                 print("Error decoding JSON: \(error)")
@@ -70,3 +77,5 @@ class NewsAPIService {
         task.resume()
     }
 }
+
+
